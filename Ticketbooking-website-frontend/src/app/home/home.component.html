@@ -1,0 +1,18 @@
+<app-navbar></app-navbar>
+<div class="container">
+
+    <div class="row mb-4 pb-2">
+      
+      <div class="col-10 mx-auto col-sm-6 col-lg-3  font-weight-bold" *ngFor="let item of data">
+        <div class="mt-5">
+         <a [routerLink]="['detailview',item.id]" ><img [src]="'http://127.0.0.1:8000/' + item.image"
+           class="img-fluid shadow-1-strong rounded" alt="Movie Poster" /></a>
+        </div>
+  
+        <div class="col mt-1">
+          <p class="mb-2 text-success">{{item.id}} <strong>{{item.name}}</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  

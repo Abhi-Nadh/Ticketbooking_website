@@ -1,0 +1,106 @@
+{% extends 'base/base.html' %}
+
+{% block nav %}
+
+{% include 'base/Navbar.html' %}
+  
+{% endblock nav %}
+
+{% block maincontent %}
+
+<style>
+  .hidden {
+    display: none;
+  }
+  
+  .visible {
+    display: block;
+  }
+  </style>
+  
+
+<div class="container">
+    <div class="row">
+      {% for movie in movielist %}
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 border-bottom justify-content-center">
+        <div class="mt-1">
+          {% if movie.is_active == 1  %}
+
+          <a href="{% url 'details' uid=movie.id%}" id="moviestatus{{movie.id}}" ><img  
+            src="{{movie.image.url}}" class="img-fluid img shadow rounded"  alt="Movie Poster"
+           height="400px" width="auto" style="max-height: 100%; max-width: 100%;" /></a>
+          {% endif %}
+    
+        </div>
+        {%if movie.is_active == 1 %}
+        <a class="float-right mt-2 disablebtn btn btn-danger" id="statusbtn{{movie.id}}" movie_id="{{movie.id}}">Disable</a>
+        
+        {% else %}
+            
+        <a class="float-right mt-2 enablebtn btn btn-success" id="statusbtn{{movie.id}}" movie_id="{{movie.id}}"">Enable</a>
+        
+        {% endif %}
+
+        <div class="col mt-2 mr-2">
+          <p class="mb-2 text-success"><strong>{{movie.name}}</strong></p>
+          {% for genre in movie.genre.all %}
+          {{genre}}/
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {%block scripts%}
+<script type="text/javascript">
+  $(document).on('click','.disablebtn',function(e){
+    e.preventDefault();
+    var movie_id = $(this).attr('movie_id');
+    $.ajax(
+      {
+          type: "POST",
+          url: "{%url 'changestatus'%}",
+          dataType: 'json',
+          data: {action:'disable',movie:movie_id},
+          success: function(data) {
+            
+            $('#statusbtn'+movie_id).toggleClass('disablebtn enablebtn');
+            $('#statusbtn'+movie_id).toggleClass('btn-danger btn-success');
+            $('#statusbtn'+movie_id).text('Enable');
+            $('#moviestatus'+movie_id).hide();
+          },
+          error: function() { 
+            alert("server error");
+          }
+      });
+  });
+
+  $(document).on('click','.enablebtn',function(e){
+    e.preventDefault();
+    var movie_id = $(this).attr('movie_id');
+    $.ajax(
+      {
+          type: "POST",
+          url: "{%url 'changestatus'%}",
+          dataType: 'json',
+          data: {action:'enable',movie:movie_id},
+          success: function(data) {
+            $('#statusbtn'+movie_id).toggleClass('enablebtn disablebtn ');
+            $('#statusbtn'+movie_id).toggleClass('btn-success btn-danger');
+            $('#statusbtn'+movie_id).text('Disable');
+            $('#moviestatus'+movie_id).show();
+
+          },
+          error: function() { 
+            alert("server error");
+          }
+      });
+  });
+</script>
+{% endblock %}
+
+{% endblock maincontent %}
+
+
+

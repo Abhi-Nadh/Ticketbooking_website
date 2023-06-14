@@ -1,0 +1,33 @@
+<section class="vh-100 ">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+          <div class="card bg-light text-dark rounded-lg card-glow">
+            <div class="card-body  p-5 text-center">
+              <h2 class="mb-4">SIGNUP</h2>
+              <form (ngSubmit)="onSignup()" class="form-group">
+                <div class="form-group">
+                  <input type="text" [(ngModel)]="signupData.username" class="form-control form-control-md" name="username" placeholder="Username" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" [(ngModel)]="signupData.email" class="form-control form-control-md" name="email" placeholder="email" required>
+                  </div>
+  
+                <div class="form-group">
+                  <input type="password"  [(ngModel)]="signupData.password"  class="form-control form-control-md" name="password" placeholder="Password" required>
+                </div>
+                <div class="form-group">
+                    <input type="password"  [(ngModel)]="signupData.conf_password"  class="form-control form-control-md" name="password" placeholder="Password" required>
+                  </div>
+
+                <button type="submit" class="btn btn-success btn-md w-100 mt-4">Sign</button>
+              </form>
+
+              <p>Already has an account?<a routerLink="/login"> Login here</a></p> 
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  

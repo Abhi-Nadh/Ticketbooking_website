@@ -1,0 +1,61 @@
+{% extends 'base/base.html' %}
+
+{% block nav %}
+
+{% include 'base/Navbar.html' %}
+{% endblock nav %}
+{% block maincontent %}
+
+
+{% if data.is_active == 1 %}
+
+<div class="container-fluid ">
+    <div class="row bg-dark justify-content-center justify-content-sm-start pt-2 bg-gradient">
+        <div class="col-8 col-sm-3 col-md-3 col-lg-3  d-flex">
+            <img  src="{{data.image.url}}" class="img-fluid float-left shadow rounded "  alt="Movie Poster"
+                width="auto" />                               
+        </div>
+        <div class="col-sm-3 col-md-3 col-lg-9  text-white">
+            <h5><strong>{{data.name}}</strong></h5> 
+            {% for language in data.language.all  %}
+            <span class="badge text-bg-dark px-3 py-2">
+                {{language}}
+            </span>
+            {% endfor %}   
+            <p class="lead"><span class="badge">
+            {{data.duration}} &bull;       
+            {% for genre in data.genre.all  %}
+            {{genre}}/
+            {% endfor %}   
+            &bull; {{data.date}} &bull;
+            {{data.time}}
+            </span>
+            </p>  
+
+            <a class="btn btn-outline-warning text-white badge px-5 me-2 py-2 shadow-lg " href="{% url 'editmovies' uid=data.id %}">Edit</a>
+            <a class="btn btn-outline-danger text-white badge px-5 py-2 shadow-lg" href="{% url 'deletemovies' uid=data.id %}">Delete</a>
+
+        </div>
+    </div>
+</div>
+
+<div class="container bg-light vh-100 mt-2">
+    <div class="row justify-content-center">
+        <div class="col text-center">
+            <h1 class="display-4"><strong>Trailer</strong></h1>
+            <iframe width="60%" height="150%" src="{{ data.trailer }}"frameborder="0"
+             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope;
+              picture-in-picture; web-share" allowfullscreen></iframe>
+              
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="ms-5">
+<h1 class="display-4">No movies Available</h1>
+<a href="{% url 'home' %}"><span class="fa fa-backward"></span> Go back</a>
+</div>
+{% endif %}
+
+
+{% endblock maincontent %}

@@ -1,0 +1,10 @@
+from django.db import models
+from django.contrib.auth.models import User
+
+class Booking_models(models.Model):
+    user_id=models.ForeignKey(User,null=True, on_delete=models.CASCADE)
+    movie_id=models.ForeignKey("admin_show_site.Movie_details",on_delete=models.CASCADE)
+    seat=models.CharField(null=True,max_length=50)
+    price=models.FloatField(null=True)
+    count=models.IntegerField()
+    total_price=models.FloatField(null=True)

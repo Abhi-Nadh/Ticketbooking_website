@@ -1,0 +1,29 @@
+{% extends 'base/base.html' %}
+
+
+{% block maincontent %}
+{% load crispy_forms_tags %}
+ 
+<div class="container-fluid bg-dark vh-100">
+    <div class="row justify-content-center">
+        <div class="col-3 mt-5 text-white mt-2 py-4 bg-dark rounded bg-gradient">
+            <form action="" method="post">
+                {% csrf_token %}
+                <h1 class="display-3 text-center">Login</h1>
+
+                
+                {% for message in messages %}
+                <p>{{message}}</p>
+                    
+                {% endfor %}
+                    
+                {{ loginform|crispy }}
+
+            <br>
+                <button type="submit" class="btn btn-primary w-100">login</button>
+            </form>
+        </div>
+    </div>
+</div>
+  
+{% endblock maincontent %}

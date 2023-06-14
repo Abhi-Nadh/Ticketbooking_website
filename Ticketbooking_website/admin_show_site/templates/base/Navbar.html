@@ -1,0 +1,54 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#"><i class="fa fa-xl fa-light fa-ticket"></i>Ticket-Book</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'addmovie' %}">Add Movies</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'manageuser' %}">Manage User</a>
+          </li>
+
+        </ul>
+        <form method="get" action="{% url 'search' %}" class="d-flex mx-auto text-white">
+          <input class="form-control me-2" name="search" type="search" id="search" placeholder="Search">
+          <button class="btn btn-outline-success pe-2 me-1" type="submit">Search</button>
+
+          <div class="dropdown dropstart ms-5">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fa fa-filter"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-start px-2" aria-labelledby="filterDropdown">
+              <li>
+                <div class="form-group">
+                  <label for="fdate">From:</label>
+                  <input type="date" class="form-control" name="fdate" id="fdate">
+                </div>
+              </li>
+              <li>
+                <div class="form-group">
+                  <label for="ldate">To:</label>
+                  <input type="date" class="form-control" name="ldate" id="ldate">
+                </div>
+              </li>
+              <li>
+                <button class="btn btn-outline-success text-dark badge mt-2 py-2 shadow-lg" type="submit">Filter</button>
+              </li>
+            </ul>
+          </div>
+                    
+        </form>
+        <div class="d-flex justify-content-end mt-1">
+        <a href="{% url 'logout' %}" class="btn btn-danger">
+         <i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Logout</a>
+        </div>
+              </div>
+    </div>
+  </nav>

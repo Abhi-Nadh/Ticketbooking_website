@@ -1,0 +1,22 @@
+section {
+    background: linear-gradient(to bottom, #007bff, #00c6ff); 
+}
+            
+
+
+
+
+.card-glow{
+animation: bglow 1.5s ease-in-out infinite alternate;
+border-radius: 5rem;
+}
+
+@keyframes bglow{
+
+0%{
+    box-shadow: 0 0 10px #22ff00;
+}
+100% {
+    box-shadow: 0 0 10px #eaff00;
+}
+}
