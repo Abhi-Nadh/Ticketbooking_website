@@ -19,7 +19,8 @@
             {{item.time}}
             </span>
             </p>  
-            <button id="bookBtn" class="btn btn-danger" data-toggle="modal" data-target="#myModal">Book Ticket</button>
+            <button id="bookBtn"  class="btn btn-danger" data-toggle="modal" data-target="#myModal">Book Ticket</button>
+<!-- <button (click)="user_details()">click</button> -->
 
             <!-- modal data -->
 
@@ -51,7 +52,7 @@
                         <label for="count">Count:</label>
                         <input type="number" id="count" class="form-control" [(ngModel)]="seatForm['count']" name="count" required>
                       </div>
-                      <button type="submit" class="btn btn-primary">Submit</button>
+                      <button  type="submit" class="btn btn-primary">Submit</button>
                     </form>
                   </div>
                 </div>

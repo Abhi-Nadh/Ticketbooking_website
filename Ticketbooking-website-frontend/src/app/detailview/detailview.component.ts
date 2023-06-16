@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UserOperationsService } from '../user-operations.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { GetidService } from '../getid.service'
 declare var $: any;
-
+declare var Razorpay: any;
 
 interface seatForm {
   seat: string;
@@ -17,60 +18,65 @@ interface seatForm {
 })
 export class DetailviewComponent implements OnInit {
   data: any;
-  id:any;
+  id: any;
   seatForm: seatForm = {
     seat: '',
     price: 0,
     count: 0
   };
 
-
-  constructor(private userop:UserOperationsService , private router:Router, private route: ActivatedRoute,) { }
+  constructor(
+    private userop: UserOperationsService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private idshare:GetidService
+  ) {}
 
   ngOnInit(): void {
-    const token=localStorage.getItem('token')
-    if (token==null)
-    {
-      this.router.navigate(['/login'])
-    }
-    else{
-    this.moviedetail()
+    const token = localStorage.getItem('token');
+    if (token == null) {
+      this.router.navigate(['/login']);
+    } else {
+      this.moviedetail();
     }
   }
 
-  moviedetail(){
-    this.id = this.route.snapshot.paramMap.get('id')
+  moviedetail(): void {
+    this.id = this.route.snapshot.paramMap.get('id');
+    this.idshare.setId(this.id)
     this.userop.detailmovie(this.id).subscribe(response => {
-      this.data=response
-      console.log(this.data)
-        });
-      }
+      this.data = response;
+      console.log(this.data);
+    });
+  }
 
-      openModal() {
-        $('#myModal').modal('show');
-      }
-    
-      closeModal() {
-        $('#myModal').modal('hide');
-      }    
+  openModal(): void {
+    $('#myModal').modal('show');
+  }
 
-      updatePrice(): void {
-        const seat = this.seatForm.seat;
-        if (seat === 'diamond') {
-          this.seatForm.price = 300.0;
-        } else if (seat === 'gold') {
-          this.seatForm.price = 180.0;
-        } else if (seat === 'silver') {
-          this.seatForm.price = 120.0;
-        }
-      }
-    
+  closeModal(): void {
+    $('#myModal').modal('hide');
+  }
 
-      booking(){
-        this.id = this.route.snapshot.paramMap.get('id')
-        this.userop.bookingmovie(this.seatForm,this.id).subscribe(response => {
+  updatePrice(): void {
+    const seat = this.seatForm.seat;
+    if (seat === 'diamond') {
+      this.seatForm.price = 300.0;
+    } else if (seat === 'gold') {
+      this.seatForm.price = 180.0;
+    } else if (seat === 'silver') {
+      this.seatForm.price = 120.0;
+    }
+  }
 
-          console.log(response)
-            });
-            }
+  booking(): void {
+    this.id = this.route.snapshot.paramMap.get('id');
+    this.userop.bookingmovie(this.seatForm, this.id).subscribe(response => {
+      console.log(response);
+    });
+    this.router.navigate(['booking']);
+    this.closeModal()
+
+  }
+
 }

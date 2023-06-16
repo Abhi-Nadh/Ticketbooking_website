@@ -1,7 +1,7 @@
 
 from django import forms
 
-from .models import Booking_models
+from .models import Booking_models, Payment_status
 
 
 class user_signup_form(forms.Form):
@@ -26,30 +26,10 @@ class BookingModelForm(forms.ModelForm):
         model = Booking_models
         fields = ['seat','price','count']
 
-# class MovieSeatForm(forms.ModelForm):
-#     seat = forms.ChoiceField()
-#     price = forms.FloatField(disabled=True, initial=0)
+class Payment_statusForm(forms.ModelForm):
+    customer_details = forms.ModelChoiceField(queryset=Booking_models.objects.all(), widget=forms.HiddenInput)
+    class Meta:
+        model = Payment_status
+        exclude = ['paydone']
 
-#     class Meta:
-#         model = Movie_seat
-#         fields = ['seat','price','count']
-    #     widgets = {
-    #         'seat': forms.Select(attrs={'class': 'form-control', 'onchange': 'updatePrice()'}),
-    #         'count': forms.NumberInput(attrs={'class': 'form-control'}),
-    #     }
-    #     labels = {
-    #         'seat': 'Seat Type',
-    #     }
-
-    # def clean(self):
-    #     cleaned_data = super().clean()
-    #     seat = cleaned_data.get('seat')
-
-    #     if seat == 'diamond':
-    #         cleaned_data['price'] = 300.0
-    #     elif seat == 'gold':
-    #         cleaned_data['price'] = 180.0
-    #     elif seat == 'silver':
-    #         cleaned_data['price'] = 120.0
-
-    #     return cleaned_data
+    

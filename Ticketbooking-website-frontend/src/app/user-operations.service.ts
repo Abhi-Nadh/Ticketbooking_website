@@ -25,17 +25,6 @@ export class UserOperationsService {
     return this.http.get<any>(`${this.apiUrl}/movielist`,httpOptions)
   }
 
-  detailmovie(id:any):Observable <any>{
-    const token=localStorage.getItem('token')
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': `token ${token}`
-      })
-    };      
-
-    return this.http.get<any>(`${this.apiUrl}/moviedetails/${id}`,httpOptions)
-  }
 
   bookingmovie(data: any,id:any){
     
@@ -52,16 +41,52 @@ export class UserOperationsService {
 
 
   bookedmoviedetails(data: any,id:any){
-    
+    const token=localStorage.getItem('token')
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `token ${token}`
+      })};    
+    console.log(id)  
+    return this.http.post<any>(`${this.apiUrl}/bookingmovie/${id}`,data,httpOptions)
+  }
+
+  user_bookin_details(id:any){
+    const token=localStorage.getItem('token')
+    const httpOptions = {
+
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `token ${token}`
+      })};    
+    return this.http.get<any>(`${this.apiUrl}/neworder/${id}`,httpOptions)
+  
+  }
+
+  detailmovie(id:any):Observable <any>{
     const token=localStorage.getItem('token')
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': `token ${token}`
       })
-    };    
-    console.log(id)  
-    return this.http.post<any>(`${this.apiUrl}/bookingmovie/${id}`,data,httpOptions)
+    };      
+
+    return this.http.get<any>(`${this.apiUrl}/moviedetails/${id}`,httpOptions)
+  }
+
+
+  razorResponse(data:any){
+    const token=localStorage.getItem('token')
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `token ${token}`
+      })
+    };      
+    console.log(data)
+
+    return this.http.post(`${this.apiUrl}/callback`,data)
   }
 
 

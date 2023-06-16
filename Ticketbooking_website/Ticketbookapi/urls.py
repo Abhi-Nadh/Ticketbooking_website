@@ -11,7 +11,8 @@ urlpatterns = [
         path('logout',views.logoutUser,name='logoutapi'),
         path('moviedetails/<int:uid>',views.movie_detail_view,name='detailapi'),
         path('bookingmovie/<int:movie_id>',views.booking_model_view,name='bookingmovie'),
-        path('finalconfirm/<int:uid>',views.final_confirm,name='bookingmovie'),
+        # path('finalconfirm/<int:uid>',views.final_confirm,name='bookingmovie'),
+        path('neworder/<int:uid>',views.new_order,name='neworder'),
         path('callback',views.order_callback,name='callback'),
 
         

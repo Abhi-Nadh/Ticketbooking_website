@@ -21,8 +21,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from Ticketbookapi.form import user_signup_form,user_login_form
 from .serializers import BookingSerializer, MovieSerializer
-from .form import BookingModelForm
-from .models import Booking_models
+from .form import BookingModelForm, Payment_statusForm
+from .models import Booking_models, Payment_status
 from admin_show_site.models import Movie_details
 
 
@@ -123,7 +123,6 @@ def booking_model_view(request, movie_id):
         count = form.cleaned_data['count']
         movie_details = Movie_details.objects.get(id=movie_id)
         total_price = price * count
-
         booking = Booking_models.objects.create(
                 user_id=user,
                 movie_id=movie_details,
@@ -136,64 +135,75 @@ def booking_model_view(request, movie_id):
     else:
         return Response({'error':'Invalid'}, status=HTTP_400_BAD_REQUEST)   
     
-@csrf_exempt
-@api_view(['GET'])
-@permission_classes((IsAuthenticated,))    
-def final_confirm(request,uid):
-    try:
-        data = Booking_models.objects.get(id=uid)
-        serialize = BookingSerializer(data)
-        return Response(serialize.data)
-    except Booking_models.DoesNotExist:
-        return Response(status=HTTP_404_NOT_FOUND)    
 
-    
 
  
 @csrf_exempt
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))    
-def new_order(request):
-    if request.method == "POST":
+def new_order(request,uid):
+    if request.method == "GET":
+        
+        data = Booking_models.objects.filter(movie_id=uid).order_by('-id').first()
+        movie_ins=data.movie_id
+        movie_name=movie_ins.name
+        # movie_image=movie_ins.image
+        movie_seat=data.seat
+        movie_total=data.total_price
 
-        print("", request.POST['price'])
-        amount = int(request.POST['price'])
-        movie_name = request.POST['movie_name']
+        # print("", request.POST['price'])
+        # amount = int(request.POST['price'])
+        # movie_name = Movie_details.objects.get(id=uid)
 
         new_order_response = razorpay_client.order.create({
-                        "amount": amount*100,
+                        "amount": movie_total*100,
                         "currency": "INR",
                         "payment_capture": "1"
                       })
+
 
         response_data = {
                 "callback_url": "http://127.0.0.1:8000/Ticketbookapi/callback",
                 "razorpay_key": "rzp_test_DCDK7quKT85NaG",
                 "order": new_order_response,
-                "name": movie_name
+                "name": movie_name,
+                "seat": movie_seat,
         }
+    
 
-        print(response_data)
+        # print(response_data)
 
         return JsonResponse(response_data)
     
     
 @csrf_exempt
-@api_view(['GET'])
-@permission_classes((IsAuthenticated,))
+@api_view(['POST'])
+@permission_classes((AllowAny,))
 def order_callback(request):
     if request.method == "POST":
-        if "razorpay_signature" in request.POST:
-            payment_verification = razorpay_client.utility.verify_payment_signature(request.POST)
-            if payment_verification:
-                return JsonResponse({"res":"success"})
-                # Logic to perform is payment is successful
-            else:
-                return JsonResponse({"res":"failed"})
-                # Logic to perform is payment is unsuccessful
+        paymentform = Payment_statusForm(request.data)
+        if paymentform.is_valid():
+           
+            movie_id = request.data.get('movie_id') 
+            customer_details = Booking_models.objects.filter(movie_id=movie_id).order_by('-id').first()
+            order_id = paymentform.cleaned_data['order_id']
+            payment_id = paymentform.cleaned_data['payment_id']
+            payment_signature = paymentform.cleaned_data['payment_signature']
+            print(customer_details)
+            order_ins = Payment_status.objects.create(
+                customer_details=customer_details,
+                order_id=order_id,
+                payment_id=payment_id,
+                payment_signature=payment_signature,
+              
+            )
+            order_ins.save()
 
-
-
+            return JsonResponse({"res": "success"})
+        else:
+            return JsonResponse({"res": "Invalid data returned", "errors": paymentform.errors})
+    else:
+        return JsonResponse({"res": "Invalid request method"})
 
             
     
