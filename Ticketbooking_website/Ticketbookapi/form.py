@@ -27,7 +27,6 @@ class BookingModelForm(forms.ModelForm):
         fields = ['seat','price','count']
 
 class Payment_statusForm(forms.ModelForm):
-    customer_details = forms.ModelChoiceField(queryset=Booking_models.objects.all(), widget=forms.HiddenInput)
     class Meta:
         model = Payment_status
         exclude = ['paydone']

@@ -10,11 +10,10 @@ class Booking_models(models.Model):
     total_price=models.FloatField(null=True)
 
 class Payment_status(models.Model):
-    customer_details = models.ForeignKey("Booking_models",on_delete=models.CASCADE)
+    customer_details = models.ForeignKey("Booking_models",on_delete=models.CASCADE,null=True)
     order_id = models.CharField(max_length=200)
     payment_id = models.CharField(max_length=200,null=True,default = None)
     payment_signature = models.CharField(max_length=200,null=True,default = None)
-    # payment_complete = models.IntegerField(default = 0)
     paydone = models.DateTimeField(auto_now_add=True)
     
     

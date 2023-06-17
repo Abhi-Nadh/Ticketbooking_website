@@ -150,6 +150,7 @@ def new_order(request,uid):
         # movie_image=movie_ins.image
         movie_seat=data.seat
         movie_total=data.total_price
+        data_id=data.id
 
         # print("", request.POST['price'])
         # amount = int(request.POST['price'])
@@ -163,11 +164,11 @@ def new_order(request,uid):
 
 
         response_data = {
-                "callback_url": "http://127.0.0.1:8000/Ticketbookapi/callback",
                 "razorpay_key": "rzp_test_DCDK7quKT85NaG",
                 "order": new_order_response,
                 "name": movie_name,
                 "seat": movie_seat,
+                "data_id": data_id
         }
     
 
@@ -182,26 +183,26 @@ def new_order(request,uid):
 def order_callback(request):
     if request.method == "POST":
         paymentform = Payment_statusForm(request.data)
-        if paymentform.is_valid():
-           
-            movie_id = request.data.get('movie_id') 
-            customer_details = Booking_models.objects.filter(movie_id=movie_id).order_by('-id').first()
-            order_id = paymentform.cleaned_data['order_id']
-            payment_id = paymentform.cleaned_data['payment_id']
-            payment_signature = paymentform.cleaned_data['payment_signature']
-            print(customer_details)
-            order_ins = Payment_status.objects.create(
+        print(paymentform)
+        # if paymentform.is_valid():
+        customer_details = paymentform.cleaned_data['customer_details']
+        # customer_details = payment_status.customer_details
+        order_id = paymentform.cleaned_data['order_id']
+        payment_id = paymentform.cleaned_data['payment_id']
+        payment_signature = paymentform.cleaned_data['payment_signature']
+        print(customer_details)
+        order_ins = Payment_status.objects.create(
                 customer_details=customer_details,
                 order_id=order_id,
                 payment_id=payment_id,
                 payment_signature=payment_signature,
               
             )
-            order_ins.save()
+        order_ins.save()
 
-            return JsonResponse({"res": "success"})
-        else:
-            return JsonResponse({"res": "Invalid data returned", "errors": paymentform.errors})
+        return JsonResponse({"res": "success"})
+        # else:
+        #     return JsonResponse({"res": "Invalid data returned", "errors": paymentform.errors})
     else:
         return JsonResponse({"res": "Invalid request method"})
 

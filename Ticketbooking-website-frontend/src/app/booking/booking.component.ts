@@ -15,12 +15,13 @@ export class BookingComponent implements OnInit {
   options: any;
   id: any;
   orderform={
-    movieid:"",
+    customer_details:"",
     order_id:"",
     payment_id:"",
     payment_signature:""
 
   }
+  data_id: any;
 
 
 
@@ -32,12 +33,15 @@ export class BookingComponent implements OnInit {
 
   ) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+
+  payment_meth(){
     const com_instance=this
     this.id=this.idshare.getId()
     this.userop.user_bookin_details(this.id).subscribe(response => {
       console.log(response);
       const orderid = response.order.id;
+      this.data_id = response.data_id;
       const convertedAmount = response.amount * 100;
 
       this.options = {
@@ -57,7 +61,7 @@ export class BookingComponent implements OnInit {
           com_instance.orderform.order_id=data.razorpay_order_id
           com_instance.orderform.payment_id=data.razorpay_payment_id
           com_instance.orderform.payment_signature=data.razorpay_signature
-          com_instance.orderform.movieid=com_instance.id
+          com_instance.orderform.customer_details=com_instance.data_id
 
           com_instance.userop.razorResponse(com_instance.orderform).subscribe(response => {
             console.log(response)
@@ -82,10 +86,14 @@ export class BookingComponent implements OnInit {
       const rzp = new Razorpay(this.options);
       rzp.open();
 
-      console.log(response.seat);
+      this.endfun()
     });
   
 
+  }
+
+  endfun(){
+    this.router.navigate(['detailview/'+this.id])
   }
 
 

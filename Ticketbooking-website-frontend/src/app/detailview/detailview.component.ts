@@ -76,7 +76,5 @@ export class DetailviewComponent implements OnInit {
     });
     this.router.navigate(['booking']);
     this.closeModal()
-
-  }
-
+                  }
 }
