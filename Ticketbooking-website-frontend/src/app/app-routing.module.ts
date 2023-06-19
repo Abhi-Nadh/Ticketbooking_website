@@ -5,6 +5,7 @@ import { SignupComponent } from './signup/signup.component';
 import { HomeComponent } from './home/home.component';
 import { DetailviewComponent } from './detailview/detailview.component';
 import { BookingComponent } from './booking/booking.component';
+import { MybookingComponent } from './mybooking/mybooking.component';
 
 
 const routes: Routes = [
@@ -13,6 +14,7 @@ const routes: Routes = [
   {path:'signup',component:SignupComponent},
   {path:'detailview/:id',component:DetailviewComponent},
   {path:'booking',component:BookingComponent},
+  {path:'mybooking',component:MybookingComponent},
 
 
 

@@ -1,8 +1,24 @@
 <div class="container-fluid vh-100" style="background:linear-gradient(to right,rgb(2, 2, 97),rgb(3, 204, 244));">
     <div class="row">
-        <div style="max-height: 95vh;" class="col-4 mx-auto mt-4">
-            
-            <a (click)="payment_meth()" class="btn btn-success w-100">Pay</a>
-        </div>
+        <div style="max-height: 95vh;" class="col-4 mx-auto p-4 mt-4 text-white">
+
+            <div class="card text-dark card-glow">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Summary <i class="fa fa-info-circle text-warning" aria-hidden="true"></i> </h5>
+                    <p class="card-text">
+                        
+                        <p>User Name:    {{bookeddata.user_id}}</p>
+                        <p>Movie Name:   {{bookeddata.movie_id}}</p>
+                        <p>Language:     {{bookeddata.language}}</p>                    
+                        <p>seat price:   {{bookeddata.price}}</p>
+                        <p>Seat type:    {{bookeddata.seat}}</p>
+                        <p>No: Seat:     {{bookeddata.count}}</p>
+                        <p>Total amount: {{bookeddata.total_price}}</p>
+                        <p>Time:         {{ bookeddata.time }}</p>       
+                </div>
+            </div>
+            <!-- {{bookeddata.id}} <br> -->
+            <a (click)="payment_meth()" class="btn btn-success w-100 mt-2 ">Pay</a>
+            </div>
     </div>
 </div>

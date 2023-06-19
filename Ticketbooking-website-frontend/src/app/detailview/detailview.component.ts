@@ -7,6 +7,7 @@ declare var Razorpay: any;
 
 interface seatForm {
   seat: string;
+  language: string;
   price: number;
   count: number;
 }
@@ -19,8 +20,10 @@ interface seatForm {
 export class DetailviewComponent implements OnInit {
   data: any;
   id: any;
+  vid:any;
   seatForm: seatForm = {
     seat: '',
+    language:'',
     price: 0,
     count: 0
   };
@@ -43,6 +46,7 @@ export class DetailviewComponent implements OnInit {
 
   moviedetail(): void {
     this.id = this.route.snapshot.paramMap.get('id');
+    console.log(this.id)
     this.idshare.setId(this.id)
     this.userop.detailmovie(this.id).subscribe(response => {
       this.data = response;
@@ -72,9 +76,12 @@ export class DetailviewComponent implements OnInit {
   booking(): void {
     this.id = this.route.snapshot.paramMap.get('id');
     this.userop.bookingmovie(this.seatForm, this.id).subscribe(response => {
-      console.log(response);
+      this.vid = response;
+      console.log(this.vid);
+      this.idshare.setIv(this.vid);
     });
     this.router.navigate(['booking']);
-    this.closeModal()
-                  }
+    this.closeModal();
+  }
 }
+

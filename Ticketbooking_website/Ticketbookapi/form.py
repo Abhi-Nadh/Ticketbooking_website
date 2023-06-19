@@ -24,7 +24,7 @@ class user_login_form(forms.Form):
 class BookingModelForm(forms.ModelForm):
     class Meta:
         model = Booking_models
-        fields = ['seat','price','count']
+        fields = ['seat','language','price','count']
 
 class Payment_statusForm(forms.ModelForm):
     class Meta:

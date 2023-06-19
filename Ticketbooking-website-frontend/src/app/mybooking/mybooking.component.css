@@ -1,0 +1,30 @@
+.date-time {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .subheading {
+    font-weight: bold;
+  }
+  
+  .time,
+  .date {
+    margin-left: 10px;
+  }
+  
+  .movie-details {
+    overflow: hidden;
+  }
+  
+  .data {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  @media (max-width: 575.98px) {
+    .movie-details {
+      padding: 15px;
+    }
+  }
+  

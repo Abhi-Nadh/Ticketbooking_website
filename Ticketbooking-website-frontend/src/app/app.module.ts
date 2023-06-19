@@ -13,6 +13,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { DetailviewComponent } from './detailview/detailview.component';
 import { SafePipe } from './safe.pipe';
 import { BookingComponent } from './booking/booking.component';
+import { MybookingComponent } from './mybooking/mybooking.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { BookingComponent } from './booking/booking.component';
     NavbarComponent,
     DetailviewComponent,
     SafePipe,
-    BookingComponent
+    BookingComponent,
+    MybookingComponent
   ],
   imports: [
     BrowserModule,

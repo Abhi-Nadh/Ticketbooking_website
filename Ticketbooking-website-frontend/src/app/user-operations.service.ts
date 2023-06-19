@@ -2,6 +2,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Route } from '@angular/router';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 
 @Injectable({
   providedIn: 'root'
@@ -88,6 +90,49 @@ export class UserOperationsService {
 
     return this.http.post(`${this.apiUrl}/callback`,data)
   }
+
+  display_book_model(id:any,token:any):Observable <any>{
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `token ${token}`
+      })
+    };      
+    console.log(id)
+
+    return this.http.get<any>(`${this.apiUrl}/display_model/${id}`,httpOptions)
+  }
+
+
+  userlistmovies():Observable <any>{
+    const token=localStorage.getItem('token')
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `token ${token}`
+      })
+    };      
+
+    return this.http.get<any>(`${this.apiUrl}/usermovies`,httpOptions)
+  }
+
+
+
+  getpdf(token:any) : Observable<Blob> {
+    console.log(token)
+    
+    const httpOptions = {
+    headers: new HttpHeaders({
+     
+      'Authorization': `token ${token}`
+    }),
+    responseType: 'blob' as 'json'
+  };
+  
+  return this.http.get<Blob>(`${this.apiUrl}/ticket`,httpOptions);
+  }
+  
+      
 
 
 }

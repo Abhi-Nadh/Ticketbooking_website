@@ -1,5 +1,6 @@
+from tkinter import Canvas
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 import razorpay
 from rest_framework.permissions import IsAuthenticated
@@ -24,6 +25,14 @@ from .serializers import BookingSerializer, MovieSerializer
 from .form import BookingModelForm, Payment_statusForm
 from .models import Booking_models, Payment_status
 from admin_show_site.models import Movie_details
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+import io
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer
+import qrcode
+
+
 
 
 @csrf_exempt
@@ -119,6 +128,7 @@ def booking_model_view(request, movie_id):
     form=BookingModelForm(request.data)
     if form.is_valid():
         seat = form.cleaned_data['seat']
+        language = form.cleaned_data['language']
         price = form.cleaned_data['price']
         count = form.cleaned_data['count']
         movie_details = Movie_details.objects.get(id=movie_id)
@@ -127,11 +137,15 @@ def booking_model_view(request, movie_id):
                 user_id=user,
                 movie_id=movie_details,
                 seat=seat,
+                language=language,
                 price=price,
                 count=count,
                 total_price=total_price
             )
-        return Response({'success': 'Booking created'}, status=HTTP_200_OK)
+        data = Booking_models.objects.filter(movie_id=movie_id).order_by('-id').first()
+        data_id=data.id
+        # return Response({'success': 'Booking created'}, status=HTTP_200_OK)
+        return Response(data_id)
     else:
         return Response({'error':'Invalid'}, status=HTTP_400_BAD_REQUEST)   
     
@@ -206,9 +220,183 @@ def order_callback(request):
     else:
         return JsonResponse({"res": "Invalid request method"})
 
-            
+
+@csrf_exempt
+@api_view(['GET'])
+@permission_classes((IsAuthenticated,))   
+def display_booking_model_data(request,uid):
+    model_data=Booking_models.objects.get(id=uid)
+    serialize=BookingSerializer(model_data)
+
+    return JsonResponse(serialize.data)
     
+@csrf_exempt
+@api_view(['GET'])
+@permission_classes((IsAuthenticated,))   
+def get_user_booked_movies(request):
+    user = request.user.id
+    movies = Booking_models.objects.filter(user_id_id=user).order_by('-id') 
+    if movies:   
+        serializer = BookingSerializer(movies,many=True)
+        return Response(serializer.data)
+    else:
+        return JsonResponse({"error":"nothing"})
+    
+    
+    
+# from reportlab.pdfgen import canvas  
+# from reportlab.lib import colors
+# from django.http import HttpResponse
+
+# @csrf_exempt
+# @api_view(['GET'])
+# @permission_classes((IsAuthenticated,))
+# def ticket_pdf(request):
+#     pdf_model = Payment_status.objects.last() 
+#     movie_name = pdf_model.customer_details.movie_id.name
+#     language = pdf_model.customer_details.movie_id.language
+#     genre = pdf_model.customer_details.movie_id.genre
+#     date =  pdf_model.customer_details.movie_id.date
+#     time =  pdf_model.customer_details.movie_id.time
+#     seat =  pdf_model.customer_details.seat
+#     price = pdf_model.customer_details.total_price
+#     orderid = pdf_model.order_id
+
+#     response = HttpResponse(content_type="application/pdf")
+#     # response["Content-Disposition"] = 'attachment; filename="movie_ticket.pdf"'
+#     response.headers = {   
+#             'Content-Type': 'application/pdf',
+#             'Content-Disposition': 'attachment;filename="movie_ticket.pdf"',
+#         }
+#     pagesize = ((700, 350))
+
+#     p = canvas.Canvas(response, pagesize=pagesize)
+  
+#     p.setFont("Helvetica", 20)
+#     p.drawString(50, 270, f"Movie: {movie_name}")
+#     p.drawString(50, 260, f"Language: {language}")
+#     p.drawString(50, 250, f"Genre: {genre}")
+#     p.drawString(50, 240, f"Date: {date}")
+#     p.drawString(50, 210, f"Time: {time}")
+#     p.drawString(50, 180, f"Seat: {seat}")
+#     p.drawString(50, 150, f"Price: Rs-{price}")
+#     p.drawString(50, 120, f"OrderID: {orderid}")
+
+#     styles = getSampleStyleSheet()
+#     title_style = styles["Heading1"]
+#     title_style.textColor = colors.red
+#     title_style.fontName = "Helvetica-Bold"
+#     title_style.alignment = 1 
+#     title_style.fontSize = 40
+
+#     # Draw the "Movie Ticket" text with the custom style
+#     p.setFont(title_style.fontName, title_style.fontSize)
+#     p.setFillColor(title_style.textColor)
+#     p.drawCentredString(350, 300, "Movie Ticket")
+   
+#     # Save the PDF
+#     p.showPage()
+#     p.save()
+
+#     return response
 
 
 
-        
+
+@csrf_exempt
+@api_view(['GET'])
+@permission_classes((IsAuthenticated,))
+def ticket_pdf(request):
+    pdf_model = Payment_status.objects.last() 
+    movie_name = pdf_model.customer_details.movie_id.name
+    # language = pdf_model.customer_details.movie_id.language
+    # genre = pdf_model.customer_details.movie_id.genre
+    count = pdf_model.customer_details.count
+    date = pdf_model.customer_details.movie_id.date
+    time = pdf_model.customer_details.movie_id.time
+    seat = pdf_model.customer_details.seat
+    price = pdf_model.customer_details.total_price
+    orderid = pdf_model.order_id
+    payment_id = pdf_model.payment_id
+    payment_signature = pdf_model.payment_signature
+    
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = 'attachment; filename="movie_ticket.pdf"'
+    
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=((700,400)))
+    elements = []
+    
+    styles = getSampleStyleSheet()
+    title_style = styles["Heading1"]
+    title_style.textColor = colors.red
+    title_style.fontName = "Helvetica-Bold"
+    title_style.alignment = 1 
+    title_style.fontSize = 40
+    
+    elements.append(Spacer(1, 1))
+    
+    
+    # Add "Movie Ticket" title
+    title_text = Paragraph("Movie Ticket", title_style)
+    elements.append(title_text)
+    spacer = Spacer(1, 50)
+    elements.append(spacer)
+
+    # Add movie details
+    movie_details = [
+        f"Movie: {movie_name}",
+        # f"Language: {language}",
+        # f"Genre: {genre}",
+        f"Date: {date} ",
+        f"Time: {time} ",
+        f"Seat: {seat} ",
+        f"Price: Rs-{price} ",
+        f"OrderID: {orderid} ",
+        f"Payment ID: {payment_id} ",
+        f"Payment Signature: {payment_signature}",
+    ]
+    
+    data_qr=f"Movie: {movie_name}\nDate: {date}\nTime: {time}\nSeat: {seat}\ncount: {count}price: {price}"
+
+    
+    for detail in movie_details:
+        detail_text = Paragraph(detail, styles["Normal"])
+        elements.append(detail_text)
+    
+    # Generate QR code containing all the data
+    qr_code_data = data_qr
+    print(qr_code_data)
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(qr_code_data)
+    qr.make(fit=True)
+    qr_image = qr.make_image(fill_color="black", back_color="white")
+    
+    # Resize the QR code image
+    max_image_width = 400
+    max_image_height = 60  # Adjust the height as per your requirement
+    qr_image.thumbnail((max_image_width, max_image_height))
+    
+    # Add QR code to PDF as an Image object
+    qr_image_io = io.BytesIO()
+    qr_image.save(qr_image_io, format='PNG')
+    qr_image_io.seek(0)
+    qr_image_obj = Image(qr_image_io, width=qr_image.width, height=qr_image.height)
+    elements.append(qr_image_obj)
+    
+    doc.build(elements)
+    
+    pdf_data = buffer.getvalue()
+    buffer.close()
+    
+    response.write(pdf_data)
+    response = HttpResponse(pdf_data, content_type="application/pdf")
+    response["Content-Disposition"] = 'inline; filename="movie_ticket.pdf"'
+    
+    return response
+

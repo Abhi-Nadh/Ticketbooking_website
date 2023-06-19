@@ -14,8 +14,9 @@ urlpatterns = [
         # path('finalconfirm/<int:uid>',views.final_confirm,name='bookingmovie'),
         path('neworder/<int:uid>',views.new_order,name='neworder'),
         path('callback',views.order_callback,name='callback'),
-
-        
+        path('display_model/<int:uid>',views.display_booking_model_data,name='display_model'),
+        path('usermovies',views.get_user_booked_movies,name='usermovies'),
+        path('ticket',views.ticket_pdf,name='ticket'),
                 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT) 

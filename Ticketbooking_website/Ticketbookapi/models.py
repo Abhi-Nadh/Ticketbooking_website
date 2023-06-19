@@ -8,6 +8,7 @@ class Booking_models(models.Model):
     price=models.FloatField(null=True)
     count=models.IntegerField()
     total_price=models.FloatField(null=True)
+    language = models.CharField(null= True, max_length=50)
 
 class Payment_status(models.Model):
     customer_details = models.ForeignKey("Booking_models",on_delete=models.CASCADE,null=True)

@@ -14,6 +14,7 @@ export class BookingComponent implements OnInit {
 
   options: any;
   id: any;
+  bookeddata: any = {};
   orderform={
     customer_details:"",
     order_id:"",
@@ -22,6 +23,7 @@ export class BookingComponent implements OnInit {
 
   }
   data_id: any;
+  vid: any;
 
 
 
@@ -33,7 +35,21 @@ export class BookingComponent implements OnInit {
 
   ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.idshare.getIv().subscribe(vid => {
+      if (vid) {
+        this.vid = vid;
+        const token = localStorage.getItem('token');
+        this.userop.display_book_model(this.vid, token).subscribe(response => {
+          this.bookeddata=response
+          console.log(response);
+        });
+      }
+    });
+  }
+
+
+
 
   payment_meth(){
     const com_instance=this
